@@ -1,0 +1,21 @@
+{
+  "telegram": {
+    "bot_token": "7604413481:AAGilgqwgxigBiW25B3StMMs2a-1DcW_gw8",
+    "chat_id": "835834224"
+  },
+  "active_hours_ist": {
+    "start": "06:00",
+    "end": "24:00"
+  },
+  "rsi": {
+    "overbought": 65,
+    "oversold": 25,
+    "period": 14
+  },
+  "pairs": [
+    {
+      "symbol": "EURUSD=X",
+      "timeframe": "1m"
+    }
+  ]
+}
