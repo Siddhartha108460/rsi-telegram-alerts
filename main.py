@@ -1,7 +1,3 @@
-import json, time, yfinance as yf, pendulum
-import pandas as pd
-from ta.momentum import RSIIndicator
-from telegram import Bot
 
 def load_config():
     with open("config.json") as f:
