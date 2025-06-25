@@ -1,10 +1,21 @@
+import os, time, yfinance as yf, pendulum
+import pandas as pd
+from ta.momentum import RSIIndicator
+from telegram import Bot
+import json  # ✅ Make sure this is included
 
 def load_config():
     with open("config.json") as f:
         return json.load(f)
 
 def prompt_override(cfg):
-    c = input("Override config values? (y/n): ").strip().lower()
+    if os.environ.get("RENDER") == "true":
+        print("Running on Render — skipping manual override.")
+        return cfg
+    try:
+        c = input("Override config values? (y/n): ").strip().lower()
+    except EOFError:
+        return cfg
     if c != 'y': return cfg
     cfg['rsi']['overbought'] = int(input("RSI overbought: "))
     cfg['rsi']['oversold'] = int(input("RSI oversold: "))
@@ -33,6 +44,9 @@ def send_telegram(bot, chat_id, msg):
 def check_pair(bot, chat_id, rsi_cfg, pair):
     sym, tf = pair['symbol'], pair['timeframe']
     df = yf.download(sym, period="60m", interval=tf)
+    if df.empty:
+        print(f"No data returned for {sym} at {tf}")
+        return
     rsi = RSIIndicator(df['Close'], window=rsi_cfg['period']).rsi().iloc[-1]
     stat = None
     if rsi > rsi_cfg['overbought']:
@@ -50,8 +64,10 @@ def main():
     while True:
         if in_active_time(cfg):
             for pair in cfg['pairs']:
-                try: check_pair(bot, chat_id, cfg['rsi'], pair)
-                except Exception as e: print("Error:", e)
+                try:
+                    check_pair(bot, chat_id, cfg['rsi'], pair)
+                except Exception as e:
+                    print("Error:", e)
         else:
             print("Outside IST active hours or weekend.")
         time.sleep(60)
