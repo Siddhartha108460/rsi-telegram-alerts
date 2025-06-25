@@ -5,7 +5,7 @@
   },
   "active_hours_ist": {
     "start": "06:00",
-    "end": "24:00"
+    "end": "23:59"
   },
   "rsi": {
     "overbought": 65,
